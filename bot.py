@@ -1,3 +1,5 @@
+from typing import Optional
+
 def get_greeting(category_slug: str, merchant_name: str) -> str:
     """Returns a tailored greeting based on category tone."""
     if category_slug == "dentists":
@@ -7,7 +9,7 @@ def get_greeting(category_slug: str, merchant_name: str) -> str:
     else:
         return f"Hi {merchant_name},"
 
-def compose(category: dict, merchant: dict, trigger: dict, customer: dict | None = None) -> dict:
+def compose(category: dict, merchant: dict, trigger: dict, customer: Optional[dict] = None) -> dict:
     """
     Core logic to compose a personalized, engaging message based on business rules.
     """
@@ -71,7 +73,7 @@ def handle_reply(reply_text: str, state: dict) -> dict:
     reply_lower = reply_text.strip().lower()
     history = state.get("history", [])
     
-    # Detect auto-replies: if the same message repeats consecutively
+    # Detect auto-replies
     if history and history[-1] == reply_lower:
         return {
             "response": "Auto-reply pattern detected. Ending conversation gracefully.",
@@ -81,7 +83,6 @@ def handle_reply(reply_text: str, state: dict) -> dict:
     history.append(reply_lower)
     state["history"] = history
     
-    # Intent matching based on new rules
     if reply_lower in ["yes", "ok", "go ahead"]:
         return {
             "response": "Great! We will proceed with the action right away.",
